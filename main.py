@@ -21,6 +21,7 @@ root = customtkinter.CTk()
 
 root.title("Application of Management")
 root.geometry("1200x800")
+root.resizable(width = False, height = False)
 
 BASEPATH = Path(__file__).parent
 
