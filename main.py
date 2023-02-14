@@ -64,7 +64,7 @@ add_workbench_image = ImageTk.PhotoImage(Image.open("images/workbench.png").resi
 
 
 def start_programm1():
-    import programm.security as security
+    import security
     subprocess.run([BASEPATH / "programm/security.py"])
 
     
