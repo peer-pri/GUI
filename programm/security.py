@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-
-Created on Sat Aug 15 14:23:16 2020
-
-GUI File
-"""
-
 from PyQt5.QtWidgets import QComboBox, QMessageBox, QFileDialog, QLineEdit, QLabel, QGridLayout, QApplication, QPushButton, QWidget
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
