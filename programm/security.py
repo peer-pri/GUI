@@ -1,170 +1,120 @@
-from PyQt5.QtWidgets import QComboBox, QMessageBox, QFileDialog, QLineEdit, QLabel, QGridLayout, QApplication, QPushButton, QWidget
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-import sys
-from datetime import datetime
+import os
+from time import sleep
+from subprocess import call
+import tkinter
 
 
-class MyWindow(QWidget):
+def encrypt(file): # Your file will be encryptet
+    have_to_encrypt = open(file, "rb").read()
+    size = len(have_to_encrypt)
+    key = os.urandom(size)
+    with open(f'{file}.key', "wb") as key_out:
+        key_out.write(key)
+    encryptet = bytes(a ^ b for (a, b) in zip(have_to_encrypt, key))
+    with open(file, "wb") as encryptet_out:
+        encryptet_out.write(encryptet)
+    print('The selected file is encryptet! The key to decrypt the file is there, where the encryptet file is.')
+    sleep(3)
 
-  def __init__(self, parent=None):
-    super(MyWindow, self).__init__(parent)
-    
-    self.title = "Text File Encrypter"
-    self.top = 50
-    self.left = 50
-    self.width = 600
-    self.height = 300
+def decrypt(filename, key): # Your file will be decryptet
+    file = open(filename, "rb").read()
+    key = open(key, "rb").read()
+    decrypted = bytes(a ^ b for (a, b) in zip(file, key))
+    with open(filename, "wb") as decrypted_out:
+        decrypted_out.write(decrypted)
+    sleep(1)
+    print('')
+    print('The key for your file is devalued, you can delet the key now!')
+    print('')
+    sleep(2)
+    startq = input('Do you want to go to the startpage? (y/n): ')
+    if startq == 'y':
+        freshConsole()
+        call(['python', 'safefiler.py'])
+    if startq == 'n':
+        print('')
+        print('Bye!')
+        sleep(1)
 
-    self.setWindowTitle(self.title)
-    self.setGeometry(self.left, self.top, self.width, self.height)
-    self.setWindowFlag(Qt.WindowMinimizeButtonHint, True)
-    self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
+# the Def for the other files to clear the console
+def freshConsole():
+    clear = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+    clear()
 
-    self.InitUI()
-    self.show() 
-    
-  def InitUI(self):
-    grid = QGridLayout()
-    
-    self.button = QPushButton(QtGui.QIcon("open_file_icon.png"),  "Browse", self)
-    self.button1 = QPushButton(QtGui.QIcon("run_icon.png"),  "Run", self)
-    
-    self.lineedit = QLineEdit(self)
-    self.lineedit1 = QLineEdit()
-    self.lineedit2 = QLineEdit()
-    
-    self.label1 = QLabel("Process type: ")
-    self.label2 = QLabel("Encryption Key [ Range 1 - 90 ]: ")
-    self.label3 = QLabel("Input File name: ")
-    self.label4 = QLabel("Output filename: ")
-    
-    self.combo = QComboBox()
-    self.combo.addItem("Encryption")
-    self.combo.addItem("Decryption")
-    
-    self.button.clicked.connect(self.openFileNameDialog)
-    self.lineedit1.setFixedSize(90,15)
-    self.lineedit1.setText("0")
-    self.lineedit1.setAlignment(Qt.AlignLeft)
-    self.label2.setAlignment(Qt.AlignRight)
-    self.validator1 = QtGui.QIntValidator(1, 90, self)
-    self.lineedit1.setValidator(self.validator1)
-    self.lineedit2.setFixedSize(90,15)
-    self.button1.clicked.connect(self.ciphering)    
-    
-    grid.addWidget(self.label1, 2, 1)
-    grid.addWidget(self.combo, 2, 2)
-    grid.addWidget(self.label3, 1, 1)
-    grid.addWidget(self.button, 1, 3)
-    grid.addWidget(self.lineedit, 1, 2)
-    grid.addWidget(self.lineedit1, 3, 2)
-    grid.addWidget(self.label2, 3, 1)
-    grid.addWidget(self.lineedit2, 4, 2)
-    grid.addWidget(self.label4, 4, 1)
-    grid.addWidget(self.button1, 6, 3)
-    
-    self.setLayout(grid)
-    
-  def openFileNameDialog(self):
-      options = QFileDialog.Options()
-      options |= QFileDialog.DontUseNativeDialog
-      global filelist
-      fileName, _ = QFileDialog.getOpenFileName(self,"Select Text file", "","Text Files (*.txt)", options=options)
-      if not fileName:
-        fileName = None
-      print(fileName)
-      self.lineedit.setText(fileName)
-        
-  def ciphering(self):
-    self.filename = self.lineedit.text()
-    self.optfilename = self.lineedit2.text()
-    self.process = self.combo.currentText()
-    self.key = self.lineedit1.text()
+def aboutq():
+    freshConsole()
+    print("""
 
-    ##########################
+This Program stays under the MIT Licens!
 
-    password_key = int(self.key)
-    store = ''
-    Letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz' \
-              '!@#$%&*(){}[]<>/\|";:\n-=+.,?0123456789'
-    now=datetime.now()
-    print(now)
 
-    option_1 = self.process
-    if option_1 == 'Encryption':
-        print('Ok Sir!..You Selected({0})'.format(option_1))
-        file = self.filename
-        if password_key == 0:
-          QMessageBox.critical(self, "Incorrect Encryption Key Entered", "Please enter Encryption key in range of 1 - 90.")
-        else:
-            print("password key: ", password_key)
-            if file.endswith('.txt'):
-                try:
-                    file = open(file, 'r').read()
-                    print('Congratualtions output file saved.')
-                except:
-                    print('Filename Error: Please! Enter File name in txt form/Enter correct address of file.')
-                for i in file:
-                    if i in Letters:
-                        number = Letters.find(i)
-                        try:
-                            number = number + int(password_key)
-                        except:
-                            print('Key Error: You Enter a Incorrect key.')
-                            break
-                        if number >= len(Letters):
-                            number = number - len(Letters)
-                        elif number < 0:
-                            number = number + len(Letters)
-                        store = store + Letters[number]
-                    else:
-                        store = store + i
-                    save_file = open('{}.txt'.format(self.optfilename), 'w')
-                    save_file.write(store)
-                    save_file.close()
-                QMessageBox.about(self, "Process completed.", "Congratulations! {} successfully done.".format(self.process))
-            else:
-                QMessageBox.critical(self, "Filename Error", "Please! Enter txt form only.")
-        
-          
-    elif option_1 == 'Decryption':
-        print('Ok Sir!..You Selected({0})'.format(option_1))
+Created by zlELo
 
-        file = self.filename
-        if password_key == 0:
-          QMessageBox.critical(self, "Incorrect Encryption Key Entered", "Please enter Encryption key in range of 1 - 90.")
-        else:
-            if file.endswith('.txt'):
-                try:
-                    file = open(file, 'r').read()
-                    print('Congratualtions output file saved.')
+Developer on GitHub: github.com/zlElo
+Developer Homepage: zlelo.github.io
 
-                except:
-                    print('Filename Error: Please! Enter File name in txt form.')
-                for i in file:
-                    if i in Letters:
-                        number = Letters.find(i)
-                        try:
-                            number = number - int(password_key)
-                        except:
-                            print('Key Error: You Enter a Incorrect key.')
-                            break
-                        if number >= len(Letters):
-                            number = number - len(Letters)
-                        elif number < 0:
-                            number = number + len(Letters)
-                        store = store + Letters[number]
-                    else:
-                        store = store + i
-                    save_file = open('{}.txt'.format(self.optfilename), 'w')
-                    save_file.write(store)
-                    save_file.close() 
-                QMessageBox.about(self, "Process completed.", "Congratulations! {} successfully done.".format(self.process))
-            else:
-                QMessageBox.critical(self, "Filename Error", "Please! Enter txt form only.")
+    """)
 
-if __name__ == "__main__":    
-  App = QApplication(sys.argv)
-  window = MyWindow()
-  sys.exit(App.exec())
+    back_quest = input('Do you want to go back to the Startpage? (y/n): ')
+
+    if back_quest == 'y':
+        freshConsole()
+        call(['python', 'safefiler.py'])
+    elif back_quest == 'n':
+        print('Have a nice day, Bye!')
+        sleep(0.5)
+        quit()
+
+# The startpage
+print("""
+                       _____       ____     _______ __         
+                      / ___/____ _/ __/__  / ____(_) /__  _____
+                      \__ \/ __ `/ /_/ _ \/ /_  / / / _ \/ ___/
+                     ___/ / /_/ / __/  __/ __/ / / /  __/ /    
+                    /____/\__,_/_/  \___/_/   /_/_/\___/_/     
+                    by zlElo
+
+Welcome to SafeFiler, your program to encrypt and decrypt important files
+secure and fast!
+
+
+You have this functions:
+
+- encrypt, encrypt files with a very high security (command: encrypt)
+- decrypt, decrypt the encrpyted file with the generated key (command: decrypt)
+
+More:
+
+- About (command: about)
+- Close the program (command: bye)
+
+""")
+
+
+# start of name process
+file_size = os.path.getsize('name.txt')
+if file_size == 0:
+    entered_name = input('Hey, you are new here. Pleas enter your Name: ')
+    file1 = open("name.txt", "w") 
+    file1.write(entered_name)
+    file1.close()
+
+f = open('name.txt', 'r')
+contents = f.read()
+name = contents
+# End of name process
+
+
+start = input(f'Hello {name}, what do you want to do?: ')
+if start == 'encrypt':
+    file = input('Pleas Enter the Path to the file: ')
+    encrypt(file)
+if start == 'decrypt':
+    filename = input('Pleas Enter the Path to the file: ')
+    key = input('Pleas Enter the Path of the key for the file: ')
+    decrypt(filename, key)
+if start == 'about':
+    aboutq()
+if start == 'bye':
+    print('Bye!')
+    quit()
