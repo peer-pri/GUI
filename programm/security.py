@@ -1,120 +1,76 @@
-import os
-from time import sleep
-from subprocess import call
-import tkinter
+import tkinter as tk
+
+from cryptography.fernet import Fernet
+
+key1 = b'u8RAvUKIPE3w3VLklEqXv4466uCeEvlKxCvdvEjxDUs='
 
 
-def encrypt(file): # Your file will be encryptet
-    have_to_encrypt = open(file, "rb").read()
-    size = len(have_to_encrypt)
-    key = os.urandom(size)
-    with open(f'{file}.key', "wb") as key_out:
-        key_out.write(key)
-    encryptet = bytes(a ^ b for (a, b) in zip(have_to_encrypt, key))
-    with open(file, "wb") as encryptet_out:
-        encryptet_out.write(encryptet)
-    print('The selected file is encryptet! The key to decrypt the file is there, where the encryptet file is.')
-    sleep(3)
-
-def decrypt(filename, key): # Your file will be decryptet
-    file = open(filename, "rb").read()
-    key = open(key, "rb").read()
-    decrypted = bytes(a ^ b for (a, b) in zip(file, key))
-    with open(filename, "wb") as decrypted_out:
-        decrypted_out.write(decrypted)
-    sleep(1)
-    print('')
-    print('The key for your file is devalued, you can delet the key now!')
-    print('')
-    sleep(2)
-    startq = input('Do you want to go to the startpage? (y/n): ')
-    if startq == 'y':
-        freshConsole()
-        call(['python', 'safefiler.py'])
-    if startq == 'n':
-        print('')
-        print('Bye!')
-        sleep(1)
-
-# the Def for the other files to clear the console
-def freshConsole():
-    clear = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
-    clear()
-
-def aboutq():
-    freshConsole()
-    print("""
-
-This Program stays under the MIT Licens!
+def encrypter():
+    f = Fernet(key1)
+    message = word.get()
+    x = message.encode()
+    encryption = f.encrypt(x)
+    encrypted.delete(0, tk.END)  # clear the entry field
+    encrypted.insert(0, encryption)
 
 
-Created by zlELo
-
-Developer on GitHub: github.com/zlElo
-Developer Homepage: zlelo.github.io
-
-    """)
-
-    back_quest = input('Do you want to go back to the Startpage? (y/n): ')
-
-    if back_quest == 'y':
-        freshConsole()
-        call(['python', 'safefiler.py'])
-    elif back_quest == 'n':
-        print('Have a nice day, Bye!')
-        sleep(0.5)
-        quit()
-
-# The startpage
-print("""
-                       _____       ____     _______ __         
-                      / ___/____ _/ __/__  / ____(_) /__  _____
-                      \__ \/ __ `/ /_/ _ \/ /_  / / / _ \/ ___/
-                     ___/ / /_/ / __/  __/ __/ / / /  __/ /    
-                    /____/\__,_/_/  \___/_/   /_/_/\___/_/     
-                    by zlElo
-
-Welcome to SafeFiler, your program to encrypt and decrypt important files
-secure and fast!
+def decrypter():
+    f = Fernet(key1)
+    message2 = encrypt.get()
+    decryption = f.decrypt(message2.encode())
+    decrypt.delete(0, tk.END)  # clear the entry field
+    decrypt.insert(0, decryption)
 
 
-You have this functions:
-
-- encrypt, encrypt files with a very high security (command: encrypt)
-- decrypt, decrypt the encrpyted file with the generated key (command: decrypt)
-
-More:
-
-- About (command: about)
-- Close the program (command: bye)
-
-""")
+def keycreator():
+    global key1
+    key1 = Fernet.generate_key()
+    key.insert(0, key1)
 
 
-# start of name process
-file_size = os.path.getsize('name.txt')
-if file_size == 0:
-    entered_name = input('Hey, you are new here. Pleas enter your Name: ')
-    file1 = open("name.txt", "w") 
-    file1.write(entered_name)
-    file1.close()
+window = tk.Tk()
+window.title("Encrypter/Decrypter")
 
-f = open('name.txt', 'r')
-contents = f.read()
-name = contents
-# End of name process
+frame = tk.Frame(master=window, width=500, height=500)
+frame.pack()
 
+label1 = tk.Label(master=frame, text='Word')
+label1.place(x=10, y=5)
 
-start = input(f'Hello {name}, what do you want to do?: ')
-if start == 'encrypt':
-    file = input('Pleas Enter the Path to the file: ')
-    encrypt(file)
-if start == 'decrypt':
-    filename = input('Pleas Enter the Path to the file: ')
-    key = input('Pleas Enter the Path of the key for the file: ')
-    decrypt(filename, key)
-if start == 'about':
-    aboutq()
-if start == 'bye':
-    print('Bye!')
-    quit()
+word = tk.Entry(master=frame)
+word.place(x=0, y=25)
+
+btn_convert_encrypt = tk.Button(master=frame, text="\N{DOWNWARDS BLACK ARROW}", command=encrypter)
+btn_convert_encrypt.place(x=40, y=50)
+
+label2 = tk.Label(master=frame, text='Encrypted')
+label2.place(x=10, y=80)
+
+encrypted = tk.Entry(master=frame)
+encrypted.place(x=0, y=100)
+
+label3 = tk.Label(master=frame, text='Encrypted')
+label3.place(x=250, y=5)
+
+encrypt = tk.Entry(master=frame)
+encrypt.place(x=250, y=25)
+
+btn_convert_decrypt = tk.Button(master=frame, text="\N{DOWNWARDS BLACK ARROW}", command=decrypter)
+btn_convert_decrypt.place(x=290, y=50)
+
+label4 = tk.Label(master=frame, text='Word')
+label4.place(x=250, y=80)
+
+decrypt = tk.Entry(master=frame)
+decrypt.place(x=250, y=100)
+
+label5 = tk.Label(master=frame, text='Key')
+label5.place(x=170, y=130)
+
+key = tk.Entry(master=frame)
+key.place(x=125, y=150)
+
+btn_randmize = tk.Button(master=frame, text="Randmize", command=keycreator)
+btn_randmize.place(x=150, y=175)
+
+window.mainloop()
