@@ -1,3 +1,8 @@
+# This program was created by zlELo
+# The original repository is here: https://github.com/zlElo/SafeFiler
+# this program stays under the GPLv2 License!
+
+
 import os
 from time import sleep 
 import tkinter as tk
