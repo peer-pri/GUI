@@ -7,10 +7,6 @@ from pathlib import Path
 import subprocess
 import os
 import sys
-import platform
-
-
-
 
 
 
@@ -50,14 +46,14 @@ update_datetime(clock_label, date_label)
 
 
 
-add_security_image = ImageTk.PhotoImage(Image.open("images/security.png").resize((30,30), Image.ANTIALIAS))
-add_gallery_image = ImageTk.PhotoImage(Image.open("images/gallery.png").resize((30,30), Image.ANTIALIAS))
-add_source_image = ImageTk.PhotoImage(Image.open("images/source.png").resize((30,30), Image.ANTIALIAS))
-add_project_image = ImageTk.PhotoImage(Image.open("images/project.png").resize((30,30), Image.ANTIALIAS))
-add_notes_image = ImageTk.PhotoImage(Image.open("images/notes.png").resize((30,30), Image.ANTIALIAS))
-add_timetable_image = ImageTk.PhotoImage(Image.open("images/timetable.png").resize((30,30), Image.ANTIALIAS))
-add_controlsystem_image = ImageTk.PhotoImage(Image.open("images/controlsystem.png").resize((30,30), Image.ANTIALIAS))
-add_workbench_image = ImageTk.PhotoImage(Image.open("images/workbench.png").resize((30,30), Image.ANTIALIAS))
+add_security_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/security.png").resize((30,30), Image.ANTIALIAS))
+add_gallery_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/gallery.png").resize((30,30), Image.ANTIALIAS))
+add_source_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/source.png").resize((30,30), Image.ANTIALIAS))
+add_project_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/project.png").resize((30,30), Image.ANTIALIAS))
+add_notes_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/notes.png").resize((30,30), Image.ANTIALIAS))
+add_timetable_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/timetable.png").resize((30,30), Image.ANTIALIAS))
+add_controlsystem_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/controlsystem.png").resize((30,30), Image.ANTIALIAS))
+add_map_image = ImageTk.PhotoImage(Image.open(BASEPATH / "images/map.png").resize((30,30), Image.ANTIALIAS))
 
 
 
@@ -65,38 +61,35 @@ add_workbench_image = ImageTk.PhotoImage(Image.open("images/workbench.png").resi
 
 def start_programm1():
     import security
-    subprocess.run([BASEPATH / "programm/security.py"])
-
-    
-
+    subprocess.run([BASEPATH / "security.py"])
 
 def start_programm2():
     import gallery
-    subprocess.run([BASEPATH / "programm/gallery.py"])
+    subprocess.run([BASEPATH / "gallery.py"])
 
 def start_programm3():
     import source
-    subprocess.run([BASEPATH / "programm/source.py"])
+    subprocess.run([BASEPATH / "source.py"])
 
 def start_programm4():
     import project
-    subprocess.run([BASEPATH / "programm/project.py"])
+    subprocess.run([BASEPATH / "project.py"])
 
 def start_programm5():
     import notes
-    subprocess.run([BASEPATH / "programm/notes.py"])
+    subprocess.run([BASEPATH / "notes.py"])
 
 def start_programm6():
     import timetable
-    subprocess.run([BASEPATH / "programm/timetable.py"])
+    subprocess.run([BASEPATH / "timetable.py"])
 
 def start_programm7():
     import controlsystem
-    subprocess.run([BASEPATH / "programm/controlsystem.py"])
+    subprocess.run([BASEPATH / "controlsystem.py"])
 
 def start_programm8():
-    import workbench
-    subprocess.run([BASEPATH / "programm/workbench.py"])
+    import map
+    subprocess.run([BASEPATH / "map.py"])
 
 
 
@@ -122,7 +115,7 @@ button_6.place(x=320, y=480)
 button_7 = customtkinter.CTkButton(master=root, image=add_controlsystem_image, text="Open Control System", width=220, height=60, compound="left", command=start_programm7)
 button_7.place(x=180, y=360)
 
-button_8 = customtkinter.CTkButton(master=root, image=add_workbench_image, text="Open Workbench", width=220, height=60, compound="left", command=start_programm8)
+button_8 = customtkinter.CTkButton(master=root, image=add_map_image, text="Open Map", width=220, height=60, compound="left", command=start_programm8)
 button_8.place(x=300, y=240)
 
 root.mainloop()
