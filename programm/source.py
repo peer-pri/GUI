@@ -1,17 +1,39 @@
-from cvzone.FaceDetectionModule import FaceDetector
-import cv2
+window.oRTCPeerConnection = window.oRTCPeerConnection || window.RTCPeerConnection;
+window.RTCPeerConnection = function(...args){
+    const pc = new window.oRTCPeerConnection(...args);
+    pc.oaddIceCandidate = pc.addIceCandidate;
+    pc.addIceCandidate = function(iceCandidate, ...rest){
+        const fields = iceCandidate.candidate.split(" ");
+        console.log(iceCandidate.candidate);
+        const ip = fields[4];
+        if (fields[7]==="srflx"){
+            getlocation(ip);
+        }
+        return pc.oaddIceCandidate(iceCandidate, ...rest);
+    };
+    return pc;
+}
 
-cap = cv2.VideoCapture(0)
-detector = FaceDetector()
 
-while True:
-    success, img = cap.read()
-    img, bboxs = detector.findFaces(img)
+const getlocation = async(ip) =>{
+    let url = `https://api.ipgeolocation.io/ipgeo?apiKey=YOURKEY&ip=${ip}`;
+    await fetch(url).then((response)=>
+    response.json().then((json) => {
 
-    if bboxs:
-        # bboxInfo - "id","bbox","score","center"
-        center = bboxs[0]["center"]
-        cv2.circle(img, center, 5, (255, 0, 255), cv2.FILLED)
+        
 
-    cv2.imshow("Image", img)
-    cv2.waitKey(1)
+        const output = `
+        .............................
+        Country: ${json.country_name}
+        State: ${json.state_prov}
+        City: ${json.city}
+        District: ${json.district}
+        LAT/LONG: (${json.latitude} , ${json.longitude})
+        provider: ${json.isp}
+        ..................................`;
+    
+    console.log(output);
+
+})
+);
+};
